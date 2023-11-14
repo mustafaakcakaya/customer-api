@@ -1,0 +1,190 @@
+definitions:
+  types.Address:
+    properties:
+      addressLine:
+        type: string
+      city:
+        type: string
+      cityCode:
+        type: integer
+      county:
+        type: string
+    type: object
+  types.AddressRequest:
+    properties:
+      addressLine:
+        type: string
+      city:
+        type: string
+      cityCode:
+        type: integer
+      county:
+        type: string
+    required:
+    - city
+    - cityCode
+    - county
+    type: object
+  types.Customer:
+    properties:
+      address:
+        $ref: '#/definitions/types.Address'
+      createdAt:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  types.CustomerUpsertRequest:
+    properties:
+      address:
+        $ref: '#/definitions/types.AddressRequest'
+      email:
+        type: string
+      name:
+        type: string
+    required:
+    - address
+    - email
+    - name
+    type: object
+  types.ProcessResponse:
+    properties:
+      isProcessSuccess:
+        type: boolean
+    type: object
+  types.ValidateResponse:
+    properties:
+      isValidated:
+        type: boolean
+    type: object
+info:
+  contact: {}
+paths:
+  /customers:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/types.Customer'
+            type: array
+        "500":
+          description: Internal Error
+      summary: Get All Customers
+      tags:
+      - Customers
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Customer
+        in: body
+        name: types.CustomerUpsertRequest
+        required: true
+        schema:
+          $ref: '#/definitions/types.CustomerUpsertRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ProcessResponse'
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Create new customer
+      tags:
+      - Customers
+  /customers/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ProcessResponse'
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Error
+      summary: Delete existing customer
+      tags:
+      - Customers
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Customer to update
+        in: body
+        name: types.CustomerUpsertRequest
+        required: true
+        schema:
+          $ref: '#/definitions/types.CustomerUpsertRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ProcessResponse'
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Update existing customer
+      tags:
+      - Customers
+  /customers/validate/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.ValidateResponse'
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Error
+      summary: Validate of existing customer
+      tags:
+      - Customers
+swagger: "2.0"
